@@ -16,6 +16,136 @@ import TaskItem from '@tiptap/extension-task-item';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Placeholder from '@tiptap/extension-placeholder';
 import lowlight from './lowlightSetup';
+import { Extension } from '@tiptap/core';
+
+// Custom extension for line height
+const LineHeight = Extension.create({
+  name: 'lineHeight',
+  
+  addOptions() {
+    return {
+      types: ['paragraph', 'heading'],
+      defaultHeight: '1.5'
+    };
+  },
+  
+  addGlobalAttributes() {
+    return [
+      {
+        types: this.options.types,
+        attributes: {
+          lineHeight: {
+            default: this.options.defaultHeight,
+            parseHTML: element => element.style.lineHeight || this.options.defaultHeight,
+            renderHTML: attributes => {
+              if (!attributes.lineHeight) {
+                return {};
+              }
+              
+              return {
+                style: `line-height: ${attributes.lineHeight}`
+              };
+            }
+          }
+        }
+      }
+    ];
+  },
+  
+  addCommands() {
+    return {
+      setLineHeight: (lineHeight) => ({ chain }) => {
+        return chain().setAttributes('paragraph', { lineHeight }).setAttributes('heading', { lineHeight }).run();
+      }
+    };
+  }
+});
+
+// Custom extension for word spacing
+const WordSpacing = Extension.create({
+  name: 'wordSpacing',
+  
+  addOptions() {
+    return {
+      types: ['paragraph', 'heading'],
+      defaultSpacing: '0em'
+    };
+  },
+  
+  addGlobalAttributes() {
+    return [
+      {
+        types: this.options.types,
+        attributes: {
+          wordSpacing: {
+            default: this.options.defaultSpacing,
+            parseHTML: element => element.style.wordSpacing || this.options.defaultSpacing,
+            renderHTML: attributes => {
+              if (!attributes.wordSpacing) {
+                return {};
+              }
+              
+              return {
+                style: `word-spacing: ${attributes.wordSpacing}`
+              };
+            }
+          }
+        }
+      }
+    ];
+  },
+  
+  addCommands() {
+    return {
+      setWordSpacing: (wordSpacing) => ({ chain }) => {
+        return chain().setAttributes('paragraph', { wordSpacing }).setAttributes('heading', { wordSpacing }).run();
+      }
+    };
+  }
+});
+
+// Custom extension for letter spacing
+const LetterSpacing = Extension.create({
+  name: 'letterSpacing',
+  
+  addOptions() {
+    return {
+      types: ['textStyle'],
+      defaultSpacing: '0em'
+    };
+  },
+  
+  addGlobalAttributes() {
+    return [
+      {
+        types: this.options.types,
+        attributes: {
+          letterSpacing: {
+            default: this.options.defaultSpacing,
+            parseHTML: element => element.style.letterSpacing || this.options.defaultSpacing,
+            renderHTML: attributes => {
+              if (!attributes.letterSpacing) {
+                return {};
+              }
+              
+              return {
+                style: `letter-spacing: ${attributes.letterSpacing}`
+              };
+            }
+          }
+        }
+      }
+    ];
+  },
+  
+  addCommands() {
+    return {
+      setLetterSpacing: (letterSpacing) => ({ chain }) => {
+        return chain().setMark('textStyle', { letterSpacing }).run();
+      }
+    };
+  }
+});
 
 // Combined extensions
 export const extensions = [
@@ -41,6 +171,11 @@ export const extensions = [
     types: ['heading', 'paragraph'],
     alignments: ['left', 'center', 'right', 'justify'],
   }),
+  
+  // Spacing controls
+  LineHeight,
+  WordSpacing,
+  LetterSpacing,
   
   // Media and links
   Link.configure({

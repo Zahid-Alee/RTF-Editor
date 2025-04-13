@@ -1,5 +1,6 @@
 import { useEditor } from '../../hooks/useEditor';
 import { EditorContent as TiptapEditorContent } from '@tiptap/react';
+import BubbleMenu from './BubbleMenu';
 
 const EditorContent = () => {
   const { editor } = useEditor();
@@ -22,7 +23,13 @@ const EditorContent = () => {
   
   return (
     <div className="p-6">
-      <TiptapEditorContent editor={editor} className="prose prose-slate max-w-none focus:outline-none" />
+      {/* Bubble menu appears when text is selected */}
+      <BubbleMenu />
+      
+      <TiptapEditorContent 
+        editor={editor} 
+        className="prose prose-slate max-w-none focus:outline-none" 
+      />
     </div>
   );
 };

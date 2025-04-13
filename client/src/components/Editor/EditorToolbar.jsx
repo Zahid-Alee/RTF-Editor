@@ -1,5 +1,32 @@
 import { useEditor } from '../../hooks/useEditor';
 import ExportDropdown from '../ExportDropdown';
+import ColorPicker from '../ColorPicker';
+import FontSelector from '../FontSelector';
+import SpacingControls from '../SpacingControls';
+import { 
+  Bold, 
+  Italic, 
+  Underline, 
+  Strikethrough,
+  Heading1, 
+  Heading2, 
+  Heading3,
+  AlignLeft, 
+  AlignCenter, 
+  AlignRight, 
+  AlignJustify,
+  List, 
+  ListOrdered, 
+  CheckSquare,
+  Quote, 
+  Code,
+  Image, 
+  Link, 
+  Table, 
+  Smile,
+  Undo, 
+  Redo,
+} from 'lucide-react';
 
 const EditorToolbar = () => {
   const { 
@@ -45,13 +72,37 @@ const EditorToolbar = () => {
   // Blockquote
   const toggleBlockquote = () => editor.chain().focus().toggleBlockquote().run();
   
-  // Code block 
-  const toggleCodeBlock = () => editor.chain().focus().toggleCodeBlock().run();
-  
   // Links
   const setLink = () => {
     // Open link modal
     openLinkModal();
+  };
+  
+  // Colors
+  const setTextColor = (color) => {
+    editor.chain().focus().setColor(color).run();
+  };
+  
+  const setHighlight = (color) => {
+    editor.chain().focus().toggleHighlight({ color }).run();
+  };
+  
+  // Font family
+  const setFontFamily = (fontFamily) => {
+    editor.chain().focus().setFontFamily(fontFamily).run();
+  };
+  
+  // Spacing controls
+  const setLineHeight = (height) => {
+    editor.chain().focus().setLineHeight(height).run();
+  };
+  
+  const setLetterSpacing = (spacing) => {
+    editor.chain().focus().setLetterSpacing(spacing + 'em').run();
+  };
+  
+  const setWordSpacing = (spacing) => {
+    editor.chain().focus().setWordSpacing(spacing + 'em').run();
   };
   
   // Undo/Redo
@@ -60,7 +111,7 @@ const EditorToolbar = () => {
   
   // Button classes based on active state
   const buttonClass = (isActive) => 
-    `p-2 rounded-md text-sm font-medium ${
+    `p-2 rounded-md text-sm font-medium flex items-center justify-center ${
       isActive 
         ? 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white' 
         : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
@@ -68,6 +119,14 @@ const EditorToolbar = () => {
   
   return (
     <div className="border-b border-gray-200 bg-white p-2 flex flex-wrap gap-1 items-center overflow-x-auto">
+      {/* Font selector */}
+      <div className="mr-2">
+        <FontSelector 
+          selectedFont={editor.getAttributes('textStyle').fontFamily} 
+          onFontSelect={setFontFamily} 
+        />
+      </div>
+      
       {/* Text Formatting */}
       <div className="flex border-r border-gray-200 pr-2 mr-2">
         <button 
@@ -75,29 +134,39 @@ const EditorToolbar = () => {
           className={buttonClass(editor.isActive('bold'))}
           title="Bold (Ctrl+B)"
         >
-          <span className="material-icons text-lg">format_bold</span>
+          <Bold className="h-4 w-4" />
         </button>
         <button 
           onClick={toggleItalic} 
           className={buttonClass(editor.isActive('italic'))}
           title="Italic (Ctrl+I)"
         >
-          <span className="material-icons text-lg">format_italic</span>
+          <Italic className="h-4 w-4" />
         </button>
         <button 
           onClick={toggleUnderline} 
           className={buttonClass(editor.isActive('underline'))}
           title="Underline (Ctrl+U)"
         >
-          <span className="material-icons text-lg">format_underlined</span>
+          <Underline className="h-4 w-4" />
         </button>
         <button 
           onClick={toggleStrike} 
           className={buttonClass(editor.isActive('strike'))}
           title="Strikethrough"
         >
-          <span className="material-icons text-lg">strikethrough_s</span>
+          <Strikethrough className="h-4 w-4" />
         </button>
+        <ColorPicker
+          selectedColor={editor.getAttributes('textStyle').color || '#000000'}
+          onColorSelect={setTextColor}
+          title="Text Color"
+        />
+        <ColorPicker
+          selectedColor={editor.getAttributes('highlight').color || '#FFFF00'}
+          onColorSelect={setHighlight}
+          title="Highlight Color"
+        />
       </div>
       
       {/* Headings */}
@@ -107,21 +176,21 @@ const EditorToolbar = () => {
           className={buttonClass(isHeadingActive(1))}
           title="Heading 1"
         >
-          <span className="material-icons text-lg">looks_one</span>
+          <Heading1 className="h-4 w-4" />
         </button>
         <button 
           onClick={() => toggleHeading(2)} 
           className={buttonClass(isHeadingActive(2))}
           title="Heading 2"
         >
-          <span className="material-icons text-lg">looks_two</span>
+          <Heading2 className="h-4 w-4" />
         </button>
         <button 
           onClick={() => toggleHeading(3)} 
           className={buttonClass(isHeadingActive(3))}
           title="Heading 3"
         >
-          <span className="material-icons text-lg">looks_3</span>
+          <Heading3 className="h-4 w-4" />
         </button>
       </div>
       
@@ -132,28 +201,28 @@ const EditorToolbar = () => {
           className={buttonClass(isTextAlignActive('left'))}
           title="Align left"
         >
-          <span className="material-icons text-lg">format_align_left</span>
+          <AlignLeft className="h-4 w-4" />
         </button>
         <button 
           onClick={() => setTextAlign('center')} 
           className={buttonClass(isTextAlignActive('center'))}
           title="Align center"
         >
-          <span className="material-icons text-lg">format_align_center</span>
+          <AlignCenter className="h-4 w-4" />
         </button>
         <button 
           onClick={() => setTextAlign('right')} 
           className={buttonClass(isTextAlignActive('right'))}
           title="Align right"
         >
-          <span className="material-icons text-lg">format_align_right</span>
+          <AlignRight className="h-4 w-4" />
         </button>
         <button 
           onClick={() => setTextAlign('justify')} 
           className={buttonClass(isTextAlignActive('justify'))}
           title="Justify"
         >
-          <span className="material-icons text-lg">format_align_justify</span>
+          <AlignJustify className="h-4 w-4" />
         </button>
       </div>
       
@@ -164,22 +233,34 @@ const EditorToolbar = () => {
           className={buttonClass(editor.isActive('bulletList'))}
           title="Bullet list"
         >
-          <span className="material-icons text-lg">format_list_bulleted</span>
+          <List className="h-4 w-4" />
         </button>
         <button 
           onClick={toggleOrderedList} 
           className={buttonClass(editor.isActive('orderedList'))}
           title="Numbered list"
         >
-          <span className="material-icons text-lg">format_list_numbered</span>
+          <ListOrdered className="h-4 w-4" />
         </button>
         <button 
           onClick={toggleTaskList} 
           className={buttonClass(editor.isActive('taskList'))}
           title="Task list"
         >
-          <span className="material-icons text-lg">checklist</span>
+          <CheckSquare className="h-4 w-4" />
         </button>
+      </div>
+      
+      {/* Spacing controls */}
+      <div className="flex border-r border-gray-200 pr-2 mr-2">
+        <SpacingControls
+          lineHeight={editor.getAttributes('paragraph').lineHeight || 1.5}
+          letterSpacing={parseFloat(editor.getAttributes('textStyle').letterSpacing) || 0}
+          wordSpacing={parseFloat(editor.getAttributes('paragraph').wordSpacing) || 0}
+          onLineHeightChange={setLineHeight}
+          onLetterSpacingChange={setLetterSpacing}
+          onWordSpacingChange={setWordSpacing}
+        />
       </div>
       
       {/* Text Block Styles */}
@@ -189,14 +270,14 @@ const EditorToolbar = () => {
           className={buttonClass(editor.isActive('blockquote'))}
           title="Blockquote"
         >
-          <span className="material-icons text-lg">format_quote</span>
+          <Quote className="h-4 w-4" />
         </button>
         <button 
           onClick={openCodeBlockModal} 
           className={buttonClass(editor.isActive('codeBlock'))}
           title="Code Block"
         >
-          <span className="material-icons text-lg">code</span>
+          <Code className="h-4 w-4" />
         </button>
       </div>
       
@@ -207,28 +288,28 @@ const EditorToolbar = () => {
           className={buttonClass(false)}
           title="Insert image"
         >
-          <span className="material-icons text-lg">image</span>
+          <Image className="h-4 w-4" />
         </button>
         <button 
           onClick={setLink} 
           className={buttonClass(editor.isActive('link'))}
           title="Insert link (Ctrl+K)"
         >
-          <span className="material-icons text-lg">link</span>
+          <Link className="h-4 w-4" />
         </button>
         <button 
           onClick={openTableSettings} 
           className={buttonClass(editor.isActive('table'))}
           title="Insert table"
         >
-          <span className="material-icons text-lg">table_chart</span>
+          <Table className="h-4 w-4" />
         </button>
         <button 
           onClick={openEmojiPicker} 
           className={buttonClass(false)}
           title="Insert emoji"
         >
-          <span className="material-icons text-lg">sentiment_satisfied_alt</span>
+          <Smile className="h-4 w-4" />
         </button>
       </div>
       
@@ -240,7 +321,7 @@ const EditorToolbar = () => {
           title="Undo (Ctrl+Z)"
           disabled={!editor.can().undo()}
         >
-          <span className="material-icons text-lg">undo</span>
+          <Undo className="h-4 w-4" />
         </button>
         <button 
           onClick={redo} 
@@ -248,7 +329,7 @@ const EditorToolbar = () => {
           title="Redo (Ctrl+Shift+Z)"
           disabled={!editor.can().redo()}
         >
-          <span className="material-icons text-lg">redo</span>
+          <Redo className="h-4 w-4" />
         </button>
         <ExportDropdown />
       </div>
