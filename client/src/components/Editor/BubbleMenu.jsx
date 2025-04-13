@@ -1,6 +1,7 @@
 import { BubbleMenu as TiptapBubbleMenu } from '@tiptap/react';
 import { useEditor } from '../../hooks/useEditor';
 import ColorPicker from '../ColorPicker';
+import AIFeatures from '../AIFeatures';
 import { 
   Bold, 
   Italic, 
@@ -130,6 +131,18 @@ const BubbleMenu = () => {
       >
         <Link className="w-4 h-4" />
       </button>
+      
+      <div className="h-4 w-px bg-gray-200 mx-1"></div>
+      
+      <AIFeatures 
+        editor={editor} 
+        isSelectionBased={true}
+        onAIAction={(action, text, isSelection) => {
+          // Handle AI actions here
+          console.log('AI action:', action, 'on text:', text);
+          alert(`AI ${action} requested for selected text. This feature would use OpenAI in a production environment.`);
+        }}
+      />
     </TiptapBubbleMenu>
   );
 };

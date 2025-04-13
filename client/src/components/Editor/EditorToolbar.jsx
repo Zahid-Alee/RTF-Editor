@@ -3,6 +3,7 @@ import ExportDropdown from '../ExportDropdown';
 import ColorPicker from '../ColorPicker';
 import FontSelector from '../FontSelector';
 import SpacingControls from '../SpacingControls';
+import AIFeatures from '../AIFeatures';
 import { 
   Bold, 
   Italic, 
@@ -102,7 +103,9 @@ const EditorToolbar = () => {
   };
   
   const setWordSpacing = (spacing) => {
-    editor.chain().focus().setWordSpacing(spacing + 'em').run();
+    // Make sure spacing is a string with 'em' units
+    const spacingValue = spacing + 'em';
+    editor.chain().focus().setWordSpacing(spacingValue).run();
   };
   
   // Undo/Redo
@@ -118,9 +121,9 @@ const EditorToolbar = () => {
     }`;
   
   return (
-    <div className="border-b border-gray-200 bg-white p-2 flex flex-wrap gap-1 items-center overflow-x-auto">
+    <div className="border-b border-gray-200 bg-white p-2 flex flex-wrap gap-1 items-center">
       {/* Font selector */}
-      <div className="mr-2">
+      <div className="relative z-30 mr-2">
         <FontSelector 
           selectedFont={editor.getAttributes('textStyle').fontFamily} 
           onFontSelect={setFontFamily} 
@@ -311,6 +314,19 @@ const EditorToolbar = () => {
         >
           <Smile className="h-4 w-4" />
         </button>
+      </div>
+      
+      {/* AI Features */}
+      <div className="flex border-r border-gray-200 pr-2 mr-2">
+        <AIFeatures 
+          editor={editor} 
+          isSelectionBased={false}
+          onAIAction={(action, text) => {
+            // Handle AI actions here 
+            console.log('AI action:', action, 'on document:', text.substring(0, 100) + '...');
+            alert(`AI ${action} requested for the entire document. This feature would use OpenAI in a production environment.`);
+          }}
+        />
       </div>
       
       {/* Undo/Redo */}
