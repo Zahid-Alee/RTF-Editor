@@ -10,9 +10,16 @@ import TableSettingsModal from '../Modals/TableSettingsModal';
 import CodeBlockModal from '../Modals/CodeBlockModal';
 import LinkModal from '../Modals/LinkModal';
 import KeyboardShortcutsModal from '../Modals/KeyboardShortcutsModal';
+import ImagePropertiesModal from '../Modals/ImagePropertiesModal';
+import { Maximize2, Minimize2 } from 'lucide-react';
 
 const Editor = () => {
-  const { editor, lastSaved } = useEditor();
+  const { 
+    editor, 
+    lastSaved,
+    isFullscreenMode,
+    toggleFullscreen 
+  } = useEditor();
   const [wordCount, setWordCount] = useState(0);
   const [charCount, setCharCount] = useState(0);
 
@@ -45,7 +52,7 @@ const Editor = () => {
   }, [editor]);
 
   return (
-    <div className="flex flex-col h-screen max-h-screen overflow-hidden">
+    <div className={`flex flex-col ${isFullscreenMode ? 'fixed inset-0 z-50 bg-white' : 'h-screen max-h-screen'} overflow-hidden`}>
       {/* Header */}
       <header className="border-b border-gray-200 bg-white py-3 px-4 sm:px-6">
         <div className="flex items-center justify-between">
@@ -57,6 +64,17 @@ const Editor = () => {
               </p>
             )}
           </div>
+          <button
+            onClick={toggleFullscreen}
+            className="p-2 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+            title={isFullscreenMode ? "Exit Fullscreen" : "Enter Fullscreen"}
+          >
+            {isFullscreenMode ? (
+              <Minimize2 className="h-5 w-5" />
+            ) : (
+              <Maximize2 className="h-5 w-5" />
+            )}
+          </button>
         </div>
       </header>
       
@@ -65,7 +83,7 @@ const Editor = () => {
       
       {/* Main Editor Area */}
       <div className="flex-1 overflow-auto bg-white p-4 sm:p-6">
-        <div className="mx-auto max-w-4xl bg-white rounded-lg shadow-sm border border-gray-100">
+        <div className={`${isFullscreenMode ? 'max-w-6xl' : 'max-w-4xl'} mx-auto bg-white rounded-lg shadow-sm border border-gray-100`}>
           <EditorContent />
         </div>
       </div>
@@ -87,6 +105,7 @@ const Editor = () => {
       <CodeBlockModal />
       <LinkModal />
       <KeyboardShortcutsModal />
+      <ImagePropertiesModal />
     </div>
   );
 };
