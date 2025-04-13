@@ -1,9 +1,47 @@
+import { useEffect } from 'react';
 import { useEditor } from '../../hooks/useEditor';
 import { EditorContent as TiptapEditorContent } from '@tiptap/react';
 import BubbleMenu from './BubbleMenu';
 
 const EditorContent = () => {
-  const { editor } = useEditor();
+  const { editor, openImageProperties } = useEditor();
+  
+  // Set up image click handler
+  useEffect(() => {
+    if (!editor) return;
+    
+    // Function to handle image clicks
+    const handleImageClick = (event) => {
+      // Check if the clicked element is an image
+      if (event.target.tagName === 'IMG') {
+        // Get the image's attributes
+        const imageData = {
+          src: event.target.getAttribute('src'),
+          alt: event.target.getAttribute('alt') || '',
+          title: event.target.getAttribute('title') || '',
+          width: event.target.getAttribute('width') || '',
+          height: event.target.getAttribute('height') || '',
+          // Try to determine alignment from style
+          alignment: event.target.style.float === 'right' ? 'right' : 
+                    (event.target.style.display === 'block' && 
+                     event.target.style.marginLeft === 'auto' && 
+                     event.target.style.marginRight === 'auto') ? 'center' : 'left'
+        };
+        
+        // Open the image properties modal with this data
+        openImageProperties(imageData);
+      }
+    };
+    
+    // Add click event listener to the editor
+    const editorElement = editor.view.dom;
+    editorElement.addEventListener('click', handleImageClick);
+    
+    // Clean up
+    return () => {
+      editorElement.removeEventListener('click', handleImageClick);
+    };
+  }, [editor, openImageProperties]);
   
   if (!editor) {
     return (

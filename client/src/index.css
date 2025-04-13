@@ -11,3 +11,93 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+/* Editor Code Block Styling */
+.ProseMirror pre {
+  @apply bg-gray-900 rounded-lg p-4 overflow-x-auto my-4;
+}
+
+.ProseMirror pre code {
+  @apply text-sm font-mono text-gray-200 block;
+  color-scheme: dark;
+}
+
+/* Syntax Highlighting */
+.hljs-comment,
+.hljs-quote {
+  @apply text-gray-500 italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-addition {
+  @apply text-purple-400;
+}
+
+.hljs-number,
+.hljs-string,
+.hljs-meta .hljs-meta-string,
+.hljs-literal,
+.hljs-doctag,
+.hljs-regexp {
+  @apply text-green-400;
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+  @apply text-blue-400;
+}
+
+.hljs-attribute,
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-class .hljs-title,
+.hljs-type {
+  @apply text-yellow-400;
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-subst,
+.hljs-meta,
+.hljs-meta .hljs-keyword,
+.hljs-selector-attr,
+.hljs-selector-pseudo {
+  @apply text-pink-400;
+}
+
+.hljs-built_in,
+.hljs-deletion {
+  @apply text-red-400;
+}
+
+.hljs-formula {
+  @apply bg-gray-800 italic;
+}
+
+.hljs-emphasis {
+  @apply italic;
+}
+
+.hljs-strong {
+  @apply font-bold;
+}
+
+/* Fullscreen mode styles */
+.tiptap-fullscreen {
+  @apply max-w-none w-full h-full;
+}
+
+/* Image styles */
+.ProseMirror img {
+  @apply max-w-full cursor-pointer transition-transform hover:ring-2 hover:ring-blue-500/30;
+  transition: transform 0.2s ease-in-out;
+}
+
+.ProseMirror img:hover {
+  transform: scale(1.01);
+}
