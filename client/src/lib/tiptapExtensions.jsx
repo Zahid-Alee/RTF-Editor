@@ -54,8 +54,11 @@ const LineHeight = Extension.create({
   
   addCommands() {
     return {
-      setLineHeight: (lineHeight) => ({ chain }) => {
-        return chain().setAttributes('paragraph', { lineHeight }).setAttributes('heading', { lineHeight }).run();
+      setLineHeight: (lineHeight) => ({ commands }) => {
+        // Apply to all selected nodes or current node if no selection
+        return this.options.types.every(type => 
+          commands.updateAttributes(type, { lineHeight: String(lineHeight) })
+        );
       }
     };
   }
@@ -97,8 +100,14 @@ const WordSpacing = Extension.create({
   
   addCommands() {
     return {
-      setWordSpacing: (wordSpacing) => ({ chain }) => {
-        return chain().setAttributes('paragraph', { wordSpacing }).setAttributes('heading', { wordSpacing }).run();
+      setWordSpacing: (wordSpacing) => ({ commands }) => {
+        // Make sure we have the 'em' unit
+        const value = wordSpacing.toString().includes('em') ? wordSpacing : `${wordSpacing}em`;
+        
+        // Apply to all selected nodes or current node if no selection
+        return this.options.types.every(type => 
+          commands.updateAttributes(type, { wordSpacing: value })
+        );
       }
     };
   }
@@ -110,7 +119,7 @@ const LetterSpacing = Extension.create({
   
   addOptions() {
     return {
-      types: ['textStyle'],
+      types: ['paragraph', 'heading'], // Changed from textStyle to block nodes
       defaultSpacing: '0em'
     };
   },
@@ -140,8 +149,14 @@ const LetterSpacing = Extension.create({
   
   addCommands() {
     return {
-      setLetterSpacing: (letterSpacing) => ({ chain }) => {
-        return chain().setMark('textStyle', { letterSpacing }).run();
+      setLetterSpacing: (letterSpacing) => ({ commands }) => {
+        // Make sure we have the 'em' unit
+        const value = letterSpacing.toString().includes('em') ? letterSpacing : `${letterSpacing}em`;
+        
+        // Apply to all selected nodes or current node if no selection
+        return this.options.types.every(type => 
+          commands.updateAttributes(type, { letterSpacing: value })
+        );
       }
     };
   }

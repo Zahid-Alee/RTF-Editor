@@ -95,17 +95,15 @@ const EditorToolbar = () => {
   
   // Spacing controls
   const setLineHeight = (height) => {
-    editor.chain().focus().setLineHeight(height).run();
+    editor.commands.setLineHeight(height);
   };
   
   const setLetterSpacing = (spacing) => {
-    editor.chain().focus().setLetterSpacing(spacing + 'em').run();
+    editor.commands.setLetterSpacing(spacing);
   };
   
   const setWordSpacing = (spacing) => {
-    // Make sure spacing is a string with 'em' units
-    const spacingValue = spacing + 'em';
-    editor.chain().focus().setWordSpacing(spacingValue).run();
+    editor.commands.setWordSpacing(spacing);
   };
   
   // Undo/Redo
@@ -257,8 +255,8 @@ const EditorToolbar = () => {
       {/* Spacing controls */}
       <div className="flex border-r border-gray-200 pr-2 mr-2">
         <SpacingControls
-          lineHeight={editor.getAttributes('paragraph').lineHeight || 1.5}
-          letterSpacing={parseFloat(editor.getAttributes('textStyle').letterSpacing) || 0}
+          lineHeight={parseFloat(editor.getAttributes('paragraph').lineHeight) || 1.5}
+          letterSpacing={parseFloat(editor.getAttributes('paragraph').letterSpacing) || 0}
           wordSpacing={parseFloat(editor.getAttributes('paragraph').wordSpacing) || 0}
           onLineHeightChange={setLineHeight}
           onLetterSpacingChange={setLetterSpacing}

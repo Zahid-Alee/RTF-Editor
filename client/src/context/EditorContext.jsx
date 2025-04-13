@@ -16,6 +16,9 @@ export const EditorProvider = ({ children }) => {
   const [isCodeBlockModalOpen, setIsCodeBlockModalOpen] = useState(false);
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [isKeyboardShortcutsOpen, setIsKeyboardShortcutsOpen] = useState(false);
+  const [isImagePropertiesOpen, setIsImagePropertiesOpen] = useState(false);
+  const [selectedImageData, setSelectedImageData] = useState(null);
+  const [isFullscreenMode, setIsFullscreenMode] = useState(false);
   const [lastSaved, setLastSaved] = useState(null);
   
   // Get default content from local storage
@@ -193,6 +196,22 @@ export const EditorProvider = ({ children }) => {
     setIsKeyboardShortcutsOpen(false);
   }, []);
   
+  // Image properties handlers
+  const openImageProperties = useCallback((imageData) => {
+    setSelectedImageData(imageData);
+    setIsImagePropertiesOpen(true);
+  }, []);
+  
+  const closeImageProperties = useCallback(() => {
+    setIsImagePropertiesOpen(false);
+    setSelectedImageData(null);
+  }, []);
+  
+  // Fullscreen mode
+  const toggleFullscreen = useCallback(() => {
+    setIsFullscreenMode(prev => !prev);
+  }, []);
+  
   // Provide the editor and methods to children
   const value = {
     editor,
@@ -228,6 +247,16 @@ export const EditorProvider = ({ children }) => {
     isKeyboardShortcutsOpen,
     openKeyboardShortcuts,
     closeKeyboardShortcuts,
+    
+    // Image properties
+    isImagePropertiesOpen,
+    openImageProperties,
+    closeImageProperties,
+    selectedImageData,
+    
+    // Fullscreen mode
+    isFullscreenMode,
+    toggleFullscreen,
   };
   
   return (
