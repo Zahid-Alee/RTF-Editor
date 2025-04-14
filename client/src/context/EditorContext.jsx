@@ -19,6 +19,7 @@ export const EditorProvider = ({ children }) => {
   const [isImagePropertiesOpen, setIsImagePropertiesOpen] = useState(false);
   const [selectedImageData, setSelectedImageData] = useState(null);
   const [isFullscreenMode, setIsFullscreenMode] = useState(false);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [lastSaved, setLastSaved] = useState(null);
   
   // Get default content from local storage
@@ -212,6 +213,18 @@ export const EditorProvider = ({ children }) => {
     setIsFullscreenMode(prev => !prev);
   }, []);
   
+  // Preview mode
+  const togglePreviewMode = useCallback(() => {
+    setIsPreviewMode(prev => !prev);
+    
+    // Update editor editable state based on preview mode
+    if (editor) {
+      // We invert the current state since this will be applied after the state update
+      const newPreviewState = !isPreviewMode;
+      editor.setEditable(!newPreviewState);
+    }
+  }, [editor, isPreviewMode]);
+  
   // Provide the editor and methods to children
   const value = {
     editor,
@@ -257,6 +270,10 @@ export const EditorProvider = ({ children }) => {
     // Fullscreen mode
     isFullscreenMode,
     toggleFullscreen,
+    
+    // Preview mode
+    isPreviewMode,
+    togglePreviewMode,
   };
   
   return (

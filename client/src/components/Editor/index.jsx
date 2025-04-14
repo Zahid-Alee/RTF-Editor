@@ -11,14 +11,16 @@ import CodeBlockModal from '../Modals/CodeBlockModal';
 import LinkModal from '../Modals/LinkModal';
 import KeyboardShortcutsModal from '../Modals/KeyboardShortcutsModal';
 import ImagePropertiesModal from '../Modals/ImagePropertiesModal';
-import { Maximize2, Minimize2 } from 'lucide-react';
+import { Maximize2, Minimize2, Eye, Edit } from 'lucide-react';
 
 const Editor = () => {
   const { 
     editor, 
     lastSaved,
     isFullscreenMode,
-    toggleFullscreen 
+    toggleFullscreen,
+    isPreviewMode,
+    togglePreviewMode
   } = useEditor();
   const [wordCount, setWordCount] = useState(0);
   const [charCount, setCharCount] = useState(0);
@@ -64,22 +66,38 @@ const Editor = () => {
               </p>
             )}
           </div>
-          <button
-            onClick={toggleFullscreen}
-            className="p-2 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
-            title={isFullscreenMode ? "Exit Fullscreen" : "Enter Fullscreen"}
-          >
-            {isFullscreenMode ? (
-              <Minimize2 className="h-5 w-5" />
-            ) : (
-              <Maximize2 className="h-5 w-5" />
-            )}
-          </button>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={togglePreviewMode}
+              className={`p-2 rounded-md hover:bg-gray-100 transition-colors ${
+                isPreviewMode ? 'text-blue-600 bg-blue-50' : 'text-gray-500 hover:text-gray-700'
+              }`}
+              title={isPreviewMode ? "Switch to Edit Mode" : "Switch to Preview Mode"}
+            >
+              {isPreviewMode ? (
+                <Edit className="h-5 w-5" />
+              ) : (
+                <Eye className="h-5 w-5" />
+              )}
+            </button>
+            
+            <button
+              onClick={toggleFullscreen}
+              className="p-2 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+              title={isFullscreenMode ? "Exit Fullscreen" : "Enter Fullscreen"}
+            >
+              {isFullscreenMode ? (
+                <Minimize2 className="h-5 w-5" />
+              ) : (
+                <Maximize2 className="h-5 w-5" />
+              )}
+            </button>
+          </div>
         </div>
       </header>
       
-      {/* Editor Toolbar */}
-      <EditorToolbar />
+      {/* Editor Toolbar - hidden in preview mode */}
+      {!isPreviewMode && <EditorToolbar />}
       
       {/* Main Editor Area */}
       <div className="flex-1 overflow-auto bg-white p-4 sm:p-6">
