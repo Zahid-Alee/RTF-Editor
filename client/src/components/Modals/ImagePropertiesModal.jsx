@@ -44,40 +44,70 @@ const ImagePropertiesModal = () => {
     
     if (!editor) return;
     
-    // Update the image
-    editor.view.state.doc.nodesBetween(0, editor.view.state.doc.content.size, (node, pos) => {
-      if (node.type.name === 'image' && node.attrs.src === selectedImageData?.src) {
-        const attributes = {
-          src: imageData.src,
-          alt: imageData.alt,
-          title: imageData.title
-        };
-        
-        if (imageData.width) {
-          attributes.width = imageData.width;
-        }
-        
-        if (imageData.height) {
-          attributes.height = imageData.height;
-        }
-        
-        // Add style for alignment
-        let style = '';
-        if (imageData.alignment === 'center') {
-          style = 'display: block; margin-left: auto; margin-right: auto;';
-        } else if (imageData.alignment === 'right') {
-          style = 'float: right; margin-left: 10px;';
-        } else {
-          style = 'float: left; margin-right: 10px;';
-        }
-        attributes.style = style;
-        
-        editor.chain().focus().setNodeSelection(pos).updateAttributes('image', attributes).run();
-        
-        return false; // Stop iterating
+    try {
+      // Log for debugging
+      console.log("Updating image with data:", imageData);
+      console.log("Selected image data:", selectedImageData);
+      
+      // Create the attributes object for the image
+      const attributes = {
+        src: imageData.src,
+        alt: imageData.alt,
+        title: imageData.title
+      };
+      
+      // Handle width and height
+      if (imageData.width) {
+        attributes.width = imageData.width;
       }
-      return true;
-    });
+      
+      if (imageData.height) {
+        attributes.height = imageData.height;
+      }
+      
+      // Add style for alignment
+      let style = '';
+      if (imageData.alignment === 'center') {
+        style = 'display: block; margin-left: auto; margin-right: auto;';
+      } else if (imageData.alignment === 'right') {
+        style = 'float: right; margin-left: 10px;';
+      } else {
+        style = 'float: left; margin-right: 10px;';
+      }
+      attributes.style = style;
+      
+      // Find and update the image node
+      let imageFound = false;
+      
+      editor.view.state.doc.nodesBetween(0, editor.view.state.doc.content.size, (node, pos) => {
+        if (node.type.name === 'image' && node.attrs.src === selectedImageData?.src) {
+          console.log("Found image node at position:", pos);
+          
+          // Use a direct command chain for more robustness
+          editor
+            .chain()
+            .focus()
+            .setNodeSelection(pos)
+            .updateAttributes('image', attributes)
+            .run();
+          
+          imageFound = true;
+          return false; // Stop iterating
+        }
+        return true;
+      });
+      
+      if (!imageFound) {
+        console.warn("Image node not found for updating");
+        // Fallback: try to update the currently selected node if it's an image
+        if (editor.isActive('image')) {
+          console.log("Updating currently selected image");
+          editor.chain().updateAttributes('image', attributes).run();
+        }
+      }
+    } catch (error) {
+      console.error("Error updating image:", error);
+    }
     
     closeImageProperties();
   };
