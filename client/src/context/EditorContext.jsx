@@ -2,6 +2,8 @@ import { createContext, useState, useCallback, useEffect, useRef } from 'react';
 import { useEditor as useTiptapEditor } from '@tiptap/react';
 import { extensions } from '../lib/tiptapExtensions';
 import { debounce } from '../lib/utils.jsx';
+import { generateAiContent } from '../services/openAiService';
+
 
 // Create context
 export const EditorContext = createContext();
@@ -9,7 +11,7 @@ export const EditorContext = createContext();
 // Storage key for local storage
 const STORAGE_KEY = 'tiptap-editor-content';
 
-export const EditorProvider = ({ children }) => {
+export const EditorProvider = ({ previewMode, children }) => {
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const [isTableSettingsOpen, setIsTableSettingsOpen] = useState(false);
@@ -19,17 +21,19 @@ export const EditorProvider = ({ children }) => {
   const [isImagePropertiesOpen, setIsImagePropertiesOpen] = useState(false);
   const [selectedImageData, setSelectedImageData] = useState(null);
   const [isFullscreenMode, setIsFullscreenMode] = useState(false);
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [isPreviewMode, setIsPreviewMode] = useState(previewMode ?? false);
   const [lastSaved, setLastSaved] = useState(null);
-  
+  const [isAiGeneratorOpen, setIsAiGeneratorOpen] = useState(false);
+
+
   // Get default content from local storage
   const getInitialContent = () => {
     if (typeof window === 'undefined') {
       return '';
     }
-    
+
     const savedContent = localStorage.getItem(STORAGE_KEY);
-    
+
     // If no saved content, return default content
     if (!savedContent) {
       return {
@@ -83,16 +87,16 @@ export const EditorProvider = ({ children }) => {
           {
             type: 'blockquote',
             content: [
-              { 
-                type: 'paragraph', 
-                content: [{ type: 'text', text: 'Pro tip: You can also use the slash command by typing "/" to access quick formatting options.' }] 
+              {
+                type: 'paragraph',
+                content: [{ type: 'text', text: 'Pro tip: You can also use the slash command by typing "/" to access quick formatting options.' }]
               }
             ]
           }
         ]
       };
     }
-    
+
     try {
       return JSON.parse(savedContent);
     } catch (e) {
@@ -100,11 +104,12 @@ export const EditorProvider = ({ children }) => {
       return '';
     }
   };
-  
+
   // Create editor instance
   const editor = useTiptapEditor({
     extensions,
     content: getInitialContent(),
+    editable: previewMode ? false : true,
     autofocus: 'end',
     onUpdate: ({ editor }) => {
       // Debounce to save content only when user stops typing
@@ -116,7 +121,7 @@ export const EditorProvider = ({ children }) => {
       },
     },
   });
-  
+
   // Create a debounced version of saveContent
   const debouncedSave = useRef(
     debounce((editor) => {
@@ -126,7 +131,7 @@ export const EditorProvider = ({ children }) => {
       }
     }, 1000)
   ).current;
-  
+
   // Manual save function
   const saveContent = useCallback(() => {
     if (editor) {
@@ -134,7 +139,7 @@ export const EditorProvider = ({ children }) => {
       setLastSaved(new Date());
     }
   }, [editor]);
-  
+
   // Listen for Ctrl+S to save
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -143,80 +148,88 @@ export const EditorProvider = ({ children }) => {
         saveContent();
       }
     };
-    
+
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [saveContent]);
-  
+
   // Dialog handlers
   const openImageDialog = useCallback(() => {
     setIsImageDialogOpen(true);
   }, []);
-  
+
   const closeImageDialog = useCallback(() => {
     setIsImageDialogOpen(false);
   }, []);
-  
+
   const openEmojiPicker = useCallback(() => {
     setIsEmojiPickerOpen(true);
   }, []);
-  
+
   const closeEmojiPicker = useCallback(() => {
     setIsEmojiPickerOpen(false);
   }, []);
-  
+
   const openTableSettings = useCallback(() => {
     setIsTableSettingsOpen(true);
   }, []);
-  
+
   const closeTableSettings = useCallback(() => {
     setIsTableSettingsOpen(false);
   }, []);
-  
+
   const openCodeBlockModal = useCallback(() => {
     setIsCodeBlockModalOpen(true);
   }, []);
-  
+
   const closeCodeBlockModal = useCallback(() => {
     setIsCodeBlockModalOpen(false);
   }, []);
-  
+
   const openLinkModal = useCallback(() => {
     setIsLinkModalOpen(true);
   }, []);
-  
+
   const closeLinkModal = useCallback(() => {
     setIsLinkModalOpen(false);
   }, []);
-  
+
   const openKeyboardShortcuts = useCallback(() => {
     setIsKeyboardShortcutsOpen(true);
   }, []);
-  
+
   const closeKeyboardShortcuts = useCallback(() => {
     setIsKeyboardShortcutsOpen(false);
   }, []);
-  
+
+  const openAiGenerator = useCallback(() => {
+    setIsAiGeneratorOpen(true);
+  }, []);
+
+  const closeAiGenerator = useCallback(() => {
+    setIsAiGeneratorOpen(false);
+  }, []);
+
   // Image properties handlers
   const openImageProperties = useCallback((imageData) => {
     setSelectedImageData(imageData);
     setIsImagePropertiesOpen(true);
   }, []);
-  
+
   const closeImageProperties = useCallback(() => {
     setIsImagePropertiesOpen(false);
     setSelectedImageData(null);
   }, []);
-  
+
   // Fullscreen mode
   const toggleFullscreen = useCallback(() => {
     setIsFullscreenMode(prev => !prev);
   }, []);
-  
+
   // Preview mode
   const togglePreviewMode = useCallback(() => {
     setIsPreviewMode(prev => !prev);
-    
+
     // Update editor editable state based on preview mode
     if (editor) {
       // We invert the current state since this will be applied after the state update
@@ -224,58 +237,93 @@ export const EditorProvider = ({ children }) => {
       editor.setEditable(!newPreviewState);
     }
   }, [editor, isPreviewMode]);
-  
+
+
+
+  const handleAiGenerate = useCallback(async (formData) => {
+    try {
+      // Get AI generated content
+      const aiContent = await generateAiContent(formData);
+
+      // Set the generated content in the editor
+      if (editor && aiContent) {
+        // First clear the editor content
+        editor.commands.clearContent();
+
+        // Then insert the new content
+        if (typeof aiContent === 'string') {
+          // If it's HTML, use setContent with html parameter
+          editor.commands.setContent(aiContent, 'html');
+        } else {
+          // If it's JSON structure, use setContent directly
+          editor.commands.setContent(aiContent);
+        }
+
+        // Save the content
+        saveContent();
+      }
+    } catch (error) {
+      console.error('Error generating AI content:', error);
+      throw error;
+    }
+  }, [editor, saveContent]);
+
   // Provide the editor and methods to children
   const value = {
     editor,
     saveContent,
     lastSaved,
-    
+
     // Image dialog
     isImageDialogOpen,
     openImageDialog,
     closeImageDialog,
-    
+
     // Emoji picker
     isEmojiPickerOpen,
     openEmojiPicker,
     closeEmojiPicker,
-    
+
     // Table settings
     isTableSettingsOpen,
     openTableSettings,
     closeTableSettings,
-    
+
     // Code block modal
     isCodeBlockModalOpen,
     openCodeBlockModal,
     closeCodeBlockModal,
-    
+
     // Link modal
     isLinkModalOpen,
     openLinkModal,
     closeLinkModal,
-    
+
     // Keyboard shortcuts modal
     isKeyboardShortcutsOpen,
     openKeyboardShortcuts,
     closeKeyboardShortcuts,
-    
+
     // Image properties
     isImagePropertiesOpen,
     openImageProperties,
     closeImageProperties,
     selectedImageData,
-    
+
     // Fullscreen mode
     isFullscreenMode,
     toggleFullscreen,
-    
+
     // Preview mode
     isPreviewMode,
     togglePreviewMode,
+
+    isAiGeneratorOpen,
+    openAiGenerator,
+    closeAiGenerator,
+    handleAiGenerate,
   };
-  
+
   return (
     <EditorContext.Provider value={value}>
       {children}

@@ -21,7 +21,6 @@ const BubbleMenu = () => {
     return null;
   }
   
-  // Text formatting
   const toggleBold = () => editor.chain().focus().toggleBold().run();
   const toggleItalic = () => editor.chain().focus().toggleItalic().run();
   const toggleUnderline = () => editor.chain().focus().toggleUnderline().run();
@@ -29,22 +28,18 @@ const BubbleMenu = () => {
   const toggleCode = () => editor.chain().focus().toggleCode().run();
   const toggleBlockquote = () => editor.chain().focus().toggleBlockquote().run();
   
-  // Text colors
   const setTextColor = (color) => {
     editor.chain().focus().setColor(color).run();
   };
   
-  // Highlight
   const setHighlight = (color) => {
     editor.chain().focus().toggleHighlight({ color }).run();
   };
   
-  // Link
   const setLink = () => {
     openLinkModal();
   };
   
-  // Button styles
   const buttonClass = (isActive) => `
     flex items-center justify-center p-1.5 rounded-md text-sm
     ${isActive ? 'bg-gray-200 text-gray-900' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}
@@ -134,7 +129,7 @@ const BubbleMenu = () => {
       
       <div className="h-4 w-px bg-gray-200 mx-1"></div>
       
-      <AIFeatures 
+      {/* <AIFeatures 
         editor={editor} 
         isSelectionBased={true}
         onAIAction={(action, text, isSelection) => {
@@ -142,7 +137,7 @@ const BubbleMenu = () => {
           console.log('AI action:', action, 'on text:', text);
           alert(`AI ${action} requested for selected text. This feature would use OpenAI in a production environment.`);
         }}
-      />
+      /> */}
     </TiptapBubbleMenu>
   );
 };

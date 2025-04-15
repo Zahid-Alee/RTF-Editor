@@ -24,13 +24,11 @@ const AIFeatures = ({ onAIAction, editor, isSelectionBased = false }) => {
   
   const handleAIAction = (action) => {
     if (editor) {
-      // For selection-based actions, ensure text is selected
       if (isSelectionBased && editor.state.selection.empty) {
         alert('Please select some text first');
         return;
       }
       
-      // Get the selected text or entire document
       const selectedText = isSelectionBased 
         ? editor.state.doc.textBetween(
             editor.state.selection.from, 
@@ -39,7 +37,6 @@ const AIFeatures = ({ onAIAction, editor, isSelectionBased = false }) => {
           )
         : editor.getText();
       
-      // Call the appropriate handler with the text
       if (selectedText) {
         onAIAction(action, selectedText, isSelectionBased);
       } else {
@@ -50,7 +47,6 @@ const AIFeatures = ({ onAIAction, editor, isSelectionBased = false }) => {
     setIsOpen(false);
   };
   
-  // Define AI actions based on whether we're in selection or document mode
   const actions = isSelectionBased
     ? [
         { id: 'simplify', name: 'Simplify', icon: Wand2, description: 'Make the selected text easier to understand' },

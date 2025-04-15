@@ -5,7 +5,11 @@ export const countWords = (text) => {
   return text.trim().split(/\s+/).length;
 };
 
-// Count characters in text
+export const getMetaContent = (name) => {
+  const meta = document.querySelector(`meta[name="${name}"]`);
+  return meta?.getAttribute('content') || null;
+};
+
 export const countCharacters = (text) => {
   return text.length;
 };

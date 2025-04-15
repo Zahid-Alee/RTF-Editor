@@ -18,7 +18,6 @@ const ExportDropdown = () => {
   const exportHTML = () => {
     const html = editor.getHTML();
     
-    // Create a temporary link to download the file
     const element = document.createElement('a');
     const file = new Blob([html], { type: 'text/html' });
     element.href = URL.createObjectURL(file);

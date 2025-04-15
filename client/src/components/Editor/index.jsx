@@ -11,7 +11,8 @@ import CodeBlockModal from '../Modals/CodeBlockModal';
 import LinkModal from '../Modals/LinkModal';
 import KeyboardShortcutsModal from '../Modals/KeyboardShortcutsModal';
 import ImagePropertiesModal from '../Modals/ImagePropertiesModal';
-import { Maximize2, Minimize2, Eye, Edit } from 'lucide-react';
+import AIGeneratorModal from '../Modals/AIGeneratorModal';
+import { Maximize2, Minimize2, Eye, Edit, Cpu } from 'lucide-react';
 
 const Editor = () => {
   const { 
@@ -20,7 +21,11 @@ const Editor = () => {
     isFullscreenMode,
     toggleFullscreen,
     isPreviewMode,
-    togglePreviewMode
+    togglePreviewMode,
+    isAiGeneratorOpen,
+    openAiGenerator,
+    closeAiGenerator,
+    handleAiGenerate
   } = useEditor();
   const [wordCount, setWordCount] = useState(0);
   const [charCount, setCharCount] = useState(0);
@@ -68,6 +73,14 @@ const Editor = () => {
           </div>
           <div className="flex items-center space-x-2">
             <button
+              onClick={openAiGenerator}
+              className="p-2 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+              title="Generate with AI"
+            >
+              <Cpu className="h-5 w-5" />
+            </button>
+            
+            <button
               onClick={togglePreviewMode}
               className={`p-2 rounded-md hover:bg-gray-100 transition-colors ${
                 isPreviewMode ? 'text-blue-600 bg-blue-50' : 'text-gray-500 hover:text-gray-700'
@@ -96,17 +109,14 @@ const Editor = () => {
         </div>
       </header>
       
-      {/* Editor Toolbar - hidden in preview mode */}
       {!isPreviewMode && <EditorToolbar />}
       
-      {/* Main Editor Area */}
       <div className="flex-1 overflow-auto bg-white p-4 sm:p-6">
         <div className={`${isFullscreenMode ? 'max-w-6xl' : 'max-w-4xl'} mx-auto bg-white rounded-lg shadow-sm border border-gray-100`}>
           <EditorContent />
         </div>
       </div>
       
-      {/* Footer with word count */}
       <footer className="border-t border-gray-200 bg-gray-50 py-2 px-4">
         <div className="flex items-center justify-between">
           <div className="text-sm text-gray-500">
@@ -116,7 +126,6 @@ const Editor = () => {
         </div>
       </footer>
       
-      {/* Modals */}
       <ImageDialog />
       <EmojiPicker />
       <TableSettingsModal />
@@ -124,6 +133,11 @@ const Editor = () => {
       <LinkModal />
       <KeyboardShortcutsModal />
       <ImagePropertiesModal />
+      <AIGeneratorModal 
+        isOpen={isAiGeneratorOpen} 
+        onClose={closeAiGenerator} 
+        onGenerate={handleAiGenerate} 
+      />
     </div>
   );
 };
