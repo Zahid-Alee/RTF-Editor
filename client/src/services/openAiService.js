@@ -6,7 +6,6 @@
 // API Keys and Endpoints
 const API_CONFIG = {
   openai: {
-    apiKey: '', // Replace with your actual OpenAI API key
     endpoint: 'https://api.openai.com/v1/chat/completions',
     defaultModel: 'gpt-4-turbo',
     headers: (key) => ({
@@ -27,7 +26,6 @@ const API_CONFIG = {
     })
   },
   claude: {
-    apiKey: 'your-claude-key', // Replace with your actual Claude API key
     endpoint: 'https://api.anthropic.com/v1/messages',
     defaultModel: 'claude-3-5-sonnet',
     headers: (key) => ({
