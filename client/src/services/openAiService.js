@@ -6,6 +6,7 @@
 // API Keys and Endpoints
 const API_CONFIG = {
   openai: {
+    apiKey: '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', // Replace with your actual OpenAI API key
     endpoint: 'https://api.openai.com/v1/chat/completions',
     defaultModel: 'gpt-4-turbo',
     headers: (key) => ({
@@ -14,10 +15,12 @@ const API_CONFIG = {
     })
   },
   gemini: {
+    apiKey: 'AIzaSyDLo4I-1UPOpsas6UGlwhUF6N1PWXDQVcw', // Replace with your actual Gemini API key
     endpoint: (key) => `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
     headers: () => ({ 'Content-Type': 'application/json' })
   },
   deepseek: {
+    apiKey: 'sk-6b276ef8cd6d497a8e5555235da9198a', // Replace with your actual DeepSeek API key
     endpoint: 'https://api.deepseek.com/v1/chat/completions',
     defaultModel: 'deepseek-chat',
     headers: (key) => ({
@@ -26,6 +29,7 @@ const API_CONFIG = {
     })
   },
   claude: {
+    apiKey: 'your-claude-key', // Replace with your actual Claude API key
     endpoint: 'https://api.anthropic.com/v1/messages',
     defaultModel: 'claude-3-5-sonnet',
     headers: (key) => ({
