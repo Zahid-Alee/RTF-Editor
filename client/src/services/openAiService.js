@@ -19,7 +19,6 @@ const API_CONFIG = {
     headers: () => ({ 'Content-Type': 'application/json' })
   },
   deepseek: {
-    apiKey: 'sk-6b276ef8cd6d497a8e5555235da9198a', // Replace with your actual DeepSeek API key
     endpoint: 'https://api.deepseek.com/v1/chat/completions',
     defaultModel: 'deepseek-chat',
     headers: (key) => ({
