@@ -3,15 +3,15 @@ import { useEditor as useTiptapEditor } from '@tiptap/react';
 import { extensions } from '../lib/tiptapExtensions';
 import { debounce } from '../lib/utils.jsx';
 import { generateAiContent } from '../services/openAiService';
+import { createLecture } from '../services/createLectureService.js';
+import axios from 'axios';
 
 
-// Create context
 export const EditorContext = createContext();
 
-// Storage key for local storage
 const STORAGE_KEY = 'tiptap-editor-content';
 
-export const EditorProvider = ({ previewMode, children }) => {
+export const EditorProvider = ({ previewMode, course_id, section_id, lecture_id, children, editorMode = 'create' }) => {
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const [isTableSettingsOpen, setIsTableSettingsOpen] = useState(false);
@@ -24,17 +24,18 @@ export const EditorProvider = ({ previewMode, children }) => {
   const [isPreviewMode, setIsPreviewMode] = useState(previewMode ?? false);
   const [lastSaved, setLastSaved] = useState(null);
   const [isAiGeneratorOpen, setIsAiGeneratorOpen] = useState(false);
+  const [savingLecture, setSavingLecture] = useState(false);
+  const [title, setTitle] = useState('Text Lecture');
 
 
-  // Get default content from local storage
   const getInitialContent = () => {
+
     if (typeof window === 'undefined') {
       return '';
     }
 
     const savedContent = localStorage.getItem(STORAGE_KEY);
 
-    // If no saved content, return default content
     if (!savedContent) {
       return {
         type: 'doc',
@@ -105,14 +106,25 @@ export const EditorProvider = ({ previewMode, children }) => {
     }
   };
 
-  // Create editor instance
+
+  async function loadLectureDetails() {
+
+    // return getInitialContent();
+    // if (editorMode === 'create') return getInitialContent();
+
+    // let apiRes = await axios.get(`/curriculum/lecture/get/${lecture_id}`);
+    // if (apiRes.data.succes)
+    //   return apiRes.data.data;
+    // console.log('api res', apiRes.data)
+    // return getInitialContent();
+  }
+
   const editor = useTiptapEditor({
     extensions,
     content: getInitialContent(),
     editable: previewMode ? false : true,
     autofocus: 'end',
     onUpdate: ({ editor }) => {
-      // Debounce to save content only when user stops typing
       debouncedSave(editor);
     },
     editorProps: {
@@ -122,7 +134,6 @@ export const EditorProvider = ({ previewMode, children }) => {
     },
   });
 
-  // Create a debounced version of saveContent
   const debouncedSave = useRef(
     debounce((editor) => {
       if (editor) {
@@ -132,7 +143,6 @@ export const EditorProvider = ({ previewMode, children }) => {
     }, 1000)
   ).current;
 
-  // Manual save function
   const saveContent = useCallback(() => {
     if (editor) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(editor.getJSON()));
@@ -140,7 +150,6 @@ export const EditorProvider = ({ previewMode, children }) => {
     }
   }, [editor]);
 
-  // Listen for Ctrl+S to save
   useEffect(() => {
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
@@ -153,7 +162,6 @@ export const EditorProvider = ({ previewMode, children }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [saveContent]);
 
-  // Dialog handlers
   const openImageDialog = useCallback(() => {
     setIsImageDialogOpen(true);
   }, []);
@@ -242,24 +250,17 @@ export const EditorProvider = ({ previewMode, children }) => {
 
   const handleAiGenerate = useCallback(async (formData) => {
     try {
-      // Get AI generated content
+
       const aiContent = await generateAiContent(formData);
 
-      // Set the generated content in the editor
       if (editor && aiContent) {
-        // First clear the editor content
         editor.commands.clearContent();
 
-        // Then insert the new content
         if (typeof aiContent === 'string') {
-          // If it's HTML, use setContent with html parameter
           editor.commands.setContent(aiContent, 'html');
         } else {
-          // If it's JSON structure, use setContent directly
           editor.commands.setContent(aiContent);
         }
-
-        // Save the content
         saveContent();
       }
     } catch (error) {
@@ -268,7 +269,17 @@ export const EditorProvider = ({ previewMode, children }) => {
     }
   }, [editor, saveContent]);
 
-  // Provide the editor and methods to children
+
+  const saveLecture = async () => {
+
+    setSavingLecture(true);
+    const text = editor.getHTML();
+
+    await createLecture({ course_id, lecture_id, section_id, content, text, title });
+    setSavingLecture(false);
+
+  }
+
   const value = {
     editor,
     saveContent,
@@ -322,6 +333,12 @@ export const EditorProvider = ({ previewMode, children }) => {
     openAiGenerator,
     closeAiGenerator,
     handleAiGenerate,
+
+    saveLecture,
+    savingLecture,
+    setSavingLecture,
+    title,
+    setTitle,
   };
 
   return (

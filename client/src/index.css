@@ -14,11 +14,12 @@
 
 /* Editor Code Block Styling */
 .ProseMirror pre {
-  @apply bg-gray-900 rounded-lg p-4 overflow-x-auto my-4;
+  @apply bg-[#282c34] p-4 !rounded-lg overflow-x-auto my-0 ;
+  border-radius: 8px !important;
 }
 
 .ProseMirror pre code {
-  @apply text-sm font-mono text-gray-200 block;
+  @apply text-sm font-mono text-gray-200 block relative z-10;
   color-scheme: dark;
 }
 
@@ -100,4 +101,25 @@
 
 .ProseMirror img:hover {
   transform: scale(1.01);
+}
+
+
+.code-block-copy-wrapper {
+
+  @apply bg-[#282c34] p-0 !rounded-lg overflow-x-auto my-0 flex items-center justify-end relative top-7 z-0;
+  border-radius: 8px !important;
+
+ 
+
+}
+
+.copy-code-button {
+
+  @apply p-2 rounded-full text-white relative z-20 ;
+}
+
+.copy-code-button:hover {
+
+  @apply bg-gray-700;
+
 }

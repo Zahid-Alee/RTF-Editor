@@ -15,8 +15,8 @@ import AIGeneratorModal from '../Modals/AIGeneratorModal';
 import { Maximize2, Minimize2, Eye, Edit, Cpu } from 'lucide-react';
 
 const Editor = () => {
-  const { 
-    editor, 
+  const {
+    editor,
     lastSaved,
     isFullscreenMode,
     toggleFullscreen,
@@ -37,21 +37,21 @@ const Editor = () => {
     const updateCounts = () => {
       // Get plain text from editor
       const text = editor.getText();
-      
+
       // Count words by splitting on whitespace
       const words = text.trim() ? text.trim().split(/\s+/).length : 0;
       setWordCount(words);
-      
+
       // Count characters
       setCharCount(text.length);
     };
 
     // Subscribe to changes
     editor.on('update', updateCounts);
-    
+
     // Initial count
     updateCounts();
-    
+
     // Cleanup
     return () => {
       editor.off('update', updateCounts);
@@ -59,7 +59,7 @@ const Editor = () => {
   }, [editor]);
 
   return (
-    <div className={`flex flex-col ${isFullscreenMode ? 'fixed inset-0 z-50 bg-white' : 'h-screen max-h-screen'} overflow-hidden`}>
+    <div className={`flex max-w-full flex-col mx-auto ${isFullscreenMode ? 'fixed inset-0 z-50 bg-white' : 'h-screen max-h-screen'} overflow-hidden`}>
       {/* Header */}
       <header className="border-b border-gray-200 bg-white py-3 px-4 sm:px-6">
         <div className="flex items-center justify-between">
@@ -74,17 +74,17 @@ const Editor = () => {
           <div className="flex items-center space-x-2">
             <button
               onClick={openAiGenerator}
-              className="p-2 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+              className="p-2 rounded-md flex items-center gap-1 text-gray-700 hover:bg-gray-100 hover:text-gray-700 transition-colors"
               title="Generate with AI"
             >
-              <Cpu className="h-5 w-5" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-wand-sparkles w-4 h-4 mt-0.5 mr-2 text-purple-600"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"></path><path d="m14 7 3 3"></path><path d="M5 6v4"></path><path d="M19 14v4"></path><path d="M10 2v2"></path><path d="M7 8H3"></path><path d="M21 16h-4"></path><path d="M11 3H9"></path></svg>
+              Generate
+
             </button>
-            
             <button
               onClick={togglePreviewMode}
-              className={`p-2 rounded-md hover:bg-gray-100 transition-colors ${
-                isPreviewMode ? 'text-blue-600 bg-blue-50' : 'text-gray-500 hover:text-gray-700'
-              }`}
+              className={`p-2 rounded-md hover:bg-gray-100 transition-colors ${isPreviewMode ? 'text-blue-600 bg-blue-50' : 'text-gray-500 hover:text-gray-700'
+                }`}
               title={isPreviewMode ? "Switch to Edit Mode" : "Switch to Preview Mode"}
             >
               {isPreviewMode ? (
@@ -93,7 +93,7 @@ const Editor = () => {
                 <Eye className="h-5 w-5" />
               )}
             </button>
-            
+
             <button
               onClick={toggleFullscreen}
               className="p-2 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
@@ -108,15 +108,15 @@ const Editor = () => {
           </div>
         </div>
       </header>
-      
+
       {!isPreviewMode && <EditorToolbar />}
-      
-      <div className="flex-1 overflow-auto bg-white p-4 sm:p-6">
-        <div className={`${isFullscreenMode ? 'max-w-6xl' : 'max-w-4xl'} mx-auto bg-white rounded-lg shadow-sm border border-gray-100`}>
+
+      <div className="flex-1 overflow-auto bg-white">
+        <div className={'max-w-6xl mx-auto bg-white rounded-lg shadow-sm border border-gray-100'}>
           <EditorContent />
         </div>
       </div>
-      
+
       <footer className="border-t border-gray-200 bg-gray-50 py-2 px-4">
         <div className="flex items-center justify-between">
           <div className="text-sm text-gray-500">
@@ -125,7 +125,7 @@ const Editor = () => {
           <EditorFooterMenu />
         </div>
       </footer>
-      
+
       <ImageDialog />
       <EmojiPicker />
       <TableSettingsModal />
@@ -133,10 +133,10 @@ const Editor = () => {
       <LinkModal />
       <KeyboardShortcutsModal />
       <ImagePropertiesModal />
-      <AIGeneratorModal 
-        isOpen={isAiGeneratorOpen} 
-        onClose={closeAiGenerator} 
-        onGenerate={handleAiGenerate} 
+      <AIGeneratorModal
+        isOpen={isAiGeneratorOpen}
+        onClose={closeAiGenerator}
+        onGenerate={handleAiGenerate}
       />
     </div>
   );

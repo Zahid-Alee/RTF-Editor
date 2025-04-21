@@ -14,7 +14,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <EditorProvider previewMode={previewMode} lectureId={lectureId}>
+      <EditorProvider previewMode={false} lectureId={lectureId}>
         <div className="bg-slate-50 min-h-screen font-sans">
           <Editor />
         </div>

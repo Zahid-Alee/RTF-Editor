@@ -17,7 +17,7 @@ import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Placeholder from '@tiptap/extension-placeholder';
 import lowlight from './lowlightSetup';
 import { Extension } from '@tiptap/core';
-
+import { CodeBlockCopy } from '../extensions/CodeBlockCopy';
 // Custom extension for line height
 const LineHeight = Extension.create({
   name: 'lineHeight',
@@ -218,10 +218,11 @@ export const extensions = [
     nested: true,
   }),
   
-  // Code blocks with syntax highlighting
+  // Code blocks with syntax highlighting and copy button
   CodeBlockLowlight.configure({
     lowlight,
   }),
+  CodeBlockCopy, // Add our new copy code extension
   
   // Placeholder text
   Placeholder.configure({
