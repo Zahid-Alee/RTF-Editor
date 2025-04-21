@@ -6,7 +6,7 @@
 // API Keys and Endpoints
 const API_CONFIG = {
   openai: {
-    apiKey: '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', // Replace with your actual OpenAI API key
+    apiKey: '', // Replace with your actual OpenAI API key
     endpoint: 'https://api.openai.com/v1/chat/completions',
     defaultModel: 'gpt-4-turbo',
     headers: (key) => ({
@@ -15,7 +15,6 @@ const API_CONFIG = {
     })
   },
   gemini: {
-    apiKey: 'AIzaSyDLo4I-1UPOpsas6UGlwhUF6N1PWXDQVcw', // Replace with your actual Gemini API key
     endpoint: (key) => `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
     headers: () => ({ 'Content-Type': 'application/json' })
   },
