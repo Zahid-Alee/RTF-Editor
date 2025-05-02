@@ -9,12 +9,10 @@ export const getMetaContent = (name) => {
   return meta?.getAttribute('content') || null;
 };
 function App() {
-  const previewMode = getMetaContent('preview-mode') === 'true';
-  const lectureId = getMetaContent('lecture-id');
 
   return (
     <QueryClientProvider client={queryClient}>
-      <EditorProvider previewMode={false} lectureId={lectureId}>
+      <EditorProvider >
         <div className="bg-slate-50 min-h-screen font-sans">
           <Editor />
         </div>

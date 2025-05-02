@@ -205,9 +205,9 @@ const AIFeatures = ({ editor, isSelectionBased = false }) => {
       </button>
       
       {isOpen && !isProcessing && (
-        <div className={`absolute ${isSelectionBased ? 'top-full mb-1' : 'top-full mt-1'} z-40 p-2 bg-white rounded-md shadow-lg border border-gray-200 w-64`}>
+        <div className={`absolute right-0 ${isSelectionBased ? 'top-full mb-1' : 'top-full mt-1'} z-40 p-2 bg-white rounded-md shadow-lg border border-gray-200 w-64`}>
           <div className="py-1 border-b border-gray-200 mb-2">
-            <h3 className="text-gray-800 text-sm font-medium text-gray-700 px-2 pb-1">
+            <h3 className="800 text-sm font-medium text-gray-700 px-2 pb-1">
               {isSelectionBased ? 'AI Text Actions' : 'AI Document Actions'}
             </h3>
           </div>

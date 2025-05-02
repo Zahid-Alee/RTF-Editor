@@ -106,19 +106,6 @@ export const EditorProvider = ({ previewMode, course_id, section_id, lecture_id,
     }
   };
 
-
-  async function loadLectureDetails() {
-
-    // return getInitialContent();
-    // if (editorMode === 'create') return getInitialContent();
-
-    // let apiRes = await axios.get(`/curriculum/lecture/get/${lecture_id}`);
-    // if (apiRes.data.succes)
-    //   return apiRes.data.data;
-    // console.log('api res', apiRes.data)
-    // return getInitialContent();
-  }
-
   const editor = useTiptapEditor({
     extensions,
     content: getInitialContent(),
